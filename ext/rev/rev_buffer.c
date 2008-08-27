@@ -240,7 +240,14 @@ static VALUE Rev_Buffer_read(int argc, VALUE *argv, VALUE self)
   Data_Get_Struct(self, struct buffer, buf);
 
   if(rb_scan_args(argc, argv, "01", &length_obj) == 1) {
-    length = NUM2INT(length_obj);
+    if(NIL_P(length_obj)) {
+      if(buf->size == 0)
+        return rb_str_new2("");
+
+      length = buf->size;
+    } else {
+      length = NUM2INT(length_obj);
+    }
   } else {
     if(buf->size == 0)
       return rb_str_new2("");
